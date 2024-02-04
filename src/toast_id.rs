@@ -25,7 +25,7 @@ impl ToastId {
 
     pub fn decode_string(s: &str) -> Self {
         let mut bytes = [0; BYTES_LEN];
-        for (index, split) in s.split(",").enumerate() {
+        for (index, split) in s.split(',').enumerate() {
             if index >= BYTES_LEN {
                 break;
             }
@@ -54,6 +54,7 @@ impl Display for ToastIdFromStrError {
 impl std::error::Error for ToastIdFromStrError {}
 
 impl ToastId {
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         let id = TOAST_COUNTER.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
         ToastId(usize_to_u8_array(id))

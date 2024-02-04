@@ -76,7 +76,7 @@ pub fn Toaster(
                 style=("--gap", format!("{}px", gap))
                 style=("--width", "356px")
                 style=("--offset", "32px")
-                style=("--front-toast-height", move || format!("{}px", heights.with(|heights| heights.get(0).map(|h| h.height).unwrap_or(0.0))))
+                style=("--front-toast-height", move || format!("{}px", heights.with(|heights| heights.first().map(|h| h.height).unwrap_or(0.0))))
                 on:mouseenter=move |_| set_expanded(true)
                 on:mousemove=move |_| set_expanded(true)
                 on:mouseleave=move |_| if !interacting() { set_expanded(false) }
@@ -84,7 +84,7 @@ pub fn Toaster(
                 on:pointerup=move |_| interacting.set(true)
             >
                 <For
-                    each=move || toasts()
+                    each=toasts
                     key=move |toast| toast.id
                     children=move |toast| {
                         // Doing this since we

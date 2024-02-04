@@ -39,7 +39,7 @@ pub struct Toasts {
 impl Toasts {
     /// Create a new toast
     pub fn toast(&self, toast: impl IntoView, id: Option<ToastId>, options: Option<ToastOptions>) {
-        let id = id.unwrap_or_else(|| ToastId::new());
+        let id = id.unwrap_or_else(ToastId::new);
         let toast = Toast {
             id,
             view: toast.into_view(),

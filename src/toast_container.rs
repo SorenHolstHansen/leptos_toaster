@@ -23,7 +23,7 @@ pub fn ToastContainer(
     let removed = RwSignal::new(false);
     let swiping = RwSignal::new(false);
     let swipe_out = RwSignal::new(false);
-    let is_visible = move || index() + 1 <= visible_toasts;
+    let is_visible = move || index() < visible_toasts;
     let is_front = move || index() == 0;
     let height_index = move || {
         heights.with(|heights| {
@@ -36,16 +36,14 @@ pub fn ToastContainer(
     let toasts_height_before = move || {
         heights.with(|heights| {
             let mut acc = 0.0;
-            for reducer_index in 0..height_index() {
-                acc += heights[reducer_index].height;
+            for height in heights.iter().take(height_index()) {
+                acc += height.height;
             }
             acc
         })
     };
     let offset = move || (height_index() * gap) as f64 + toasts_height_before();
-    let is_expanded = move || {
-        return expanded() || (expand_by_default && mounted());
-    };
+    let is_expanded = move || expanded() || (expand_by_default && mounted());
     let duration = toast.options.duration.unwrap_or(duration_from_toaster);
 
     let initial_height = RwSignal::new(0.0);
@@ -126,14 +124,14 @@ pub fn ToastContainer(
             data-visible=move || is_visible().to_string()
             data-y-position=position.y()
             data-x-position=position.x()
-            data-index=move || index()
+            data-index=index
             data-front=move || is_front().to_string()
             data-swiping=move || swiping().to_string()
             data-swipe-out=move || swipe_out().to_string()
             data-expanded=move || is_expanded().to_string()
             data-dismissible=toast.options.dismissible.to_string()
-            style=("--index", move || index())
-            style=("--toasts-before", move || index())
+            style=("--index", index)
+            style=("--toasts-before", index)
             style=("--z-index", move || num_toasts() - index())
             style=("--offset", move || format!("{}px", offset()))
             style=("--initial-height", move || if expand_by_default {"auto".to_string()} else { format!("{}px", initial_height()) })
