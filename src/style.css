@@ -1,0 +1,215 @@
+.leptos-toaster {
+  position: fixed;
+  width: var(--width);
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  outline: none;
+  z-index: 999999999;
+}
+
+.leptos-toaster[data-x-position='right'] {
+  right: max(var(--offset), env(safe-area-inset-right));
+}
+
+.leptos-toaster[data-x-position='left'] {
+  left: max(var(--offset), env(safe-area-inset-left));
+}
+
+.leptos-toaster[data-x-position='center'] {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.leptos-toaster[data-y-position='top'] {
+  top: max(var(--offset), env(safe-area-inset-top));
+}
+
+.leptos-toaster[data-y-position='bottom'] {
+  bottom: max(var(--offset), env(safe-area-inset-bottom));
+}
+
+.leptos-toast-container {
+  --y: translateY(100%);
+  --lift-amount: calc(var(--lift) * var(--gap));
+  z-index: var(--z-index);
+  position: absolute;
+  opacity: 0;
+  transform: var(--y);
+  /* https://stackoverflow.com/questions/48124372/pointermove-event-not-working-with-touch-why-not */
+  touch-action: none;
+  will-change: transform, opacity, height;
+  transition:
+    transform 400ms,
+    opacity 400ms,
+    height 400ms,
+    box-shadow 200ms;
+  box-sizing: border-box;
+  outline: none;
+  overflow-wrap: anywhere;
+}
+
+.leptos-toast-container[data-y-position='top'] {
+  top: 0;
+  --y: translateY(-100%);
+  --lift: 1;
+  --lift-amount: calc(1 * var(--gap));
+}
+
+.leptos-toast-container[data-y-position='bottom'] {
+  bottom: 0;
+  --y: translateY(100%);
+  --lift: -1;
+  --lift-amount: calc(var(--lift) * var(--gap));
+}
+
+/* Leave a ghost div to avoid setting hover to false when swiping out */
+.leptos-toast-container[data-swiping='true']:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  z-index: -1;
+}
+
+.leptos-toast-container[data-y-position='top'][data-swiping='true']:before {
+  /* y 50% needed to distribute height additional height evenly */
+  bottom: 50%;
+  transform: scaleY(3) translateY(50%);
+}
+
+.leptos-toast-container[data-y-position='bottom'][data-swiping='true']:before {
+  /* y -50% needed to distribute height additional height evenly */
+  top: 50%;
+  transform: scaleY(3) translateY(-50%);
+}
+
+/* Leave a ghost div to avoid setting hover to false when transitioning out */
+.leptos-toast-container[data-swiping='false'][data-removed='true']:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: scaleY(2);
+}
+
+/* Needed to avoid setting hover to false when inbetween toasts */
+.leptos-toast-container:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  height: calc(var(--gap) + 1px);
+  bottom: 100%;
+  width: 100%;
+}
+
+.leptos-toast-container[data-mounted='true'] {
+  --y: translateY(0);
+  opacity: 1;
+}
+
+.leptos-toast-container[data-expanded='false'][data-front='false'] {
+  --scale: var(--toasts-before) * 0.05 + 1;
+  --y: translateY(calc(var(--lift-amount) * var(--toasts-before))) scale(calc(-1 * var(--scale)));
+  height: var(--front-toast-height);
+}
+
+.leptos-toast-container > * {
+  transition: opacity 400ms;
+}
+
+.leptos-toast-container[data-expanded='false'][data-front='false'][data-styled='true'] > * {
+  opacity: 0;
+}
+
+.leptos-toast-container[data-visible='false'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.leptos-toast-container[data-mounted='true'][data-expanded='true'] {
+  --y: translateY(calc(var(--lift) * var(--offset)));
+  height: var(--initial-height);
+}
+
+.leptos-toast-container[data-removed='true'][data-front='true'][data-swipe-out='false'] {
+  --y: translateY(calc(var(--lift) * -100%));
+  opacity: 0;
+}
+
+.leptos-toast-container[data-removed='true'][data-front='false'][data-swipe-out='false'][data-expanded='true'] {
+  --y: translateY(calc(var(--lift) * var(--offset) + var(--lift) * -100%));
+  opacity: 0;
+}
+
+.leptos-toast-container[data-removed='true'][data-front='false'][data-swipe-out='false'][data-expanded='false'] {
+  --y: translateY(40%);
+  opacity: 0;
+  transition:
+    transform 500ms,
+    opacity 200ms;
+}
+
+/* Bump up the height to make sure hover state doesn't get set to false */
+.leptos-toast-container[data-removed='true'][data-front='false']:before {
+  height: calc(var(--initial-height) + 20%);
+}
+
+.leptos-toast-container[data-swiping='true'] {
+  transform: var(--y) translateY(var(--swipe-amount, 0px));
+  transition: none;
+}
+
+.leptos-toast-container[data-swipe-out='true'][data-y-position='bottom'],
+.leptos-toast-container[data-swipe-out='true'][data-y-position='top'] {
+  animation: swipe-out 200ms ease-out forwards;
+}
+
+@keyframes swipe-out {
+  from {
+    transform: translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount)));
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount) + var(--lift) * -100%));
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .leptos-toaster {
+    position: fixed;
+    --mobile-offset: 16px;
+    right: var(--mobile-offset);
+    left: var(--mobile-offset);
+    width: 100%;
+  }
+
+  .leptos-toaster .leptos-toast-container {
+    left: 0;
+    right: 0;
+    width: calc(100% - 32px);
+  }
+
+  .leptos-toaster[data-x-position='left'] {
+    left: var(--mobile-offset);
+  }
+
+  .leptos-toaster[data-y-position='bottom'] {
+    bottom: 20px;
+  }
+
+  .leptos-toaster[data-y-position='top'] {
+    top: 20px;
+  }
+
+  .leptos-toaster[data-x-position='center'] {
+    left: var(--mobile-offset);
+    right: var(--mobile-offset);
+    transform: none;
+  }
+}
+
+

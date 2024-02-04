@@ -1,4 +1,5 @@
 use crate::{
+    mount_style::mount_style,
     toast_container::ToastContainer,
     types::{HeightT, Toasts},
     ToastId, ToasterPosition,
@@ -21,6 +22,7 @@ pub fn Toaster(
     visible_toasts: usize,
     children: Children,
 ) -> impl IntoView {
+    mount_style("toaster", include_str!("./style.css"));
     let (toasts, set_toasts) = create_signal(Vec::new());
     let (expanded, set_expanded) = create_signal(false);
     let interacting = RwSignal::new(false);

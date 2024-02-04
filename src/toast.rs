@@ -1,6 +1,5 @@
+use crate::{mount_style::mount_style, types::dismiss_toast, ToastId};
 use leptos::*;
-
-use crate::{types::dismiss_toast, ToastId};
 
 #[component]
 fn SuccessIcon() -> impl IntoView {
@@ -82,6 +81,8 @@ pub fn Toast(
     #[prop(default = None)] description: Option<View>,
     toast_id: ToastId,
 ) -> impl IntoView {
+    mount_style("builtin_toast", include_str!("./builtin_toast.css"));
+
     view! {
         <div style="padding: 16px; background: white; border: 1px solid hsl(0, 0%, 93%); border-radius: 8px; box-shadow: 0 4px 12px #0000001a; display: flex; align-items: center; gap: 6px; width: 356px" data-type=variant.to_string() class="leptos-toast">
             <button
