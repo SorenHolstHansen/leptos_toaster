@@ -4,24 +4,16 @@ name: General CI
 on:
   pull_request:
 jobs:
-  fmt:
-    name: Rustfmt
+  linting:
+    name: linting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@nightly
         with:
-          components: rustfmt
-      - name: Enforce formatting
+          components: rustfmt, clippy
+      - name: fmt
         run: cargo fmt --check
-
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: clippy
-      - name: Lint server
+      - name: clippy
         run: cargo clippy -- -D warnings
+
