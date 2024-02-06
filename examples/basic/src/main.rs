@@ -1,6 +1,6 @@
 use leptos::*;
 use leptos_toaster::{
-    Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition, Toasts,
+    Theme, Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition, Toasts,
 };
 
 fn main() {
@@ -28,8 +28,9 @@ fn Page() -> impl IntoView {
             view! {
                 <Toast
                     toast_id
-                    variant=ToastVariant::Info
+                    variant=ToastVariant::Success
                     title=view! { "My toast" }.into_view()
+                    description=Some(view! {"My description"}.into_view())
                 />
             },
             Some(toast_id),

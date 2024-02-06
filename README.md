@@ -1,3 +1,5 @@
+![Example](assets/example.gif)
+
 # leptos_toaster
 
 A Toaster component for Leptos heavily inspired by [sonner](https://sonner.emilkowal.ski/)
