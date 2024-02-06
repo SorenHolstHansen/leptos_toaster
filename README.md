@@ -22,7 +22,8 @@ let toast_context = expect_context::<Toasts>();
 let create_toast = move || {
 	let toast_id = ToastId::new();
 	toast_context.toast(
-		// This uses the built in toast component that requires the `builtin_toast` feature. You can use your own components here
+		// This uses the built in toast component that requires the `builtin_toast` feature.
+		// You can use your own components here
 		view! { 
 			<Toast 
 				toast_id 
