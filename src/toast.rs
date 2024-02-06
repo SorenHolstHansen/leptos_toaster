@@ -80,32 +80,35 @@ pub fn Toast(
     title: View,
     #[prop(default = None)] description: Option<View>,
     toast_id: ToastId,
+    #[prop(default = true)] close_button: bool,
 ) -> impl IntoView {
     mount_style("builtin_toast", include_str!("./builtin_toast.css"));
 
     view! {
         <div style="padding: 16px; background: white; border: 1px solid hsl(0, 0%, 93%); border-radius: 8px; box-shadow: 0 4px 12px #0000001a; display: flex; align-items: center; gap: 6px; width: 356px" data-type=variant.to_string() class="leptos-toast">
-            <button
-                on:click=move |_| {
-                    dismiss_toast(&toast_id);
-                }
-                data-close-button
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+            <Show when=move || close_button>
+                <button
+                    on:click=move |_| {
+                        dismiss_toast(&toast_id);
+                    }
+                    data-close-button
                 >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </Show>
 
             <div class="h-full">
                 {match variant {
