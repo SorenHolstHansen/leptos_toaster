@@ -6,6 +6,7 @@ repository = "https://github.com/SorenHolstHansen/leptos_toaster"
 license = "MIT"
 description = "A Toaster component for Leptos"
 keywords = ["leptos", "toaster", "toast"]
+authors = ["Søren H. Hansen"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
