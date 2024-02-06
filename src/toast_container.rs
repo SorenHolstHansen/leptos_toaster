@@ -2,8 +2,15 @@ use crate::{
     types::{decode_message, HeightT, Toast},
     ToastId, ToasterPosition,
 };
-use leptos::{leptos_dom::helpers::TimeoutHandle, *};
+use js_sys::Date;
+use leptos::{
+    leptos_dom::{helpers::TimeoutHandle, logging::console_log},
+    *,
+};
+use std::cmp::{max, min};
 use std::time::Duration;
+use wasm_bindgen::JsCast;
+use web_sys::{HtmlElement, PointerEvent};
 
 #[component]
 pub fn ToastContainer(
@@ -71,7 +78,7 @@ pub fn ToastContainer(
 
     let delete_timeout_handle = RwSignal::<Option<TimeoutHandle>>::new(None);
 
-    let delete_toast = move |_| {
+    let delete_toast = move || {
         removed.set(true);
         offset_before_remove.set(offset());
         heights.update(|heights| {
@@ -88,7 +95,7 @@ pub fn ToastContainer(
                 }
                 remove_toast(toast.id);
             },
-            Duration::from_millis(200),
+            std::time::Duration::from_millis(200),
         );
     };
 
@@ -97,7 +104,7 @@ pub fn ToastContainer(
         if let Some(id) = ev.data().as_string() {
             if let Some(id) = decode_message(id) {
                 if id == toast.id {
-                    delete_toast(id);
+                    delete_toast();
                 }
             }
         }
@@ -108,10 +115,92 @@ pub fn ToastContainer(
     });
 
     create_effect(move |_| {
-        if let Ok(handle) = set_timeout_with_handle(move || delete_toast(toast.id), duration) {
+        if let Ok(handle) = set_timeout_with_handle(move || delete_toast(), duration) {
             delete_timeout_handle.set(Some(handle));
         }
     });
+
+    #[derive(Clone)]
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+    let drag_start_time = RwSignal::<Option<Date>>::new(None);
+    let pointer_start = RwSignal::<Option<Point>>::new(None);
+    let swipe_amount = RwSignal::<i32>::new(0);
+    let handle_pointerdown = move |ev: PointerEvent| {
+        if !toast.options.dismissible {
+            return;
+        }
+        drag_start_time.set(Some(Date::new_0()));
+        offset_before_remove.set(offset());
+
+        if let Some(target) = ev.target() {
+            if let Some(element) = target.dyn_ref::<HtmlElement>() {
+                console_log("IN HERE");
+                let _ = element.set_pointer_capture(ev.pointer_id());
+                if element.tag_name() == "BUTTON" {
+                    return;
+                }
+                swiping.set(true);
+                pointer_start.set(Some(Point {
+                    x: ev.client_x(),
+                    y: ev.client_y(),
+                }));
+            }
+        }
+    };
+
+    let handle_pointerup = move |_| {
+        if swipe_out() || !toast.options.dismissible {
+            return;
+        }
+        pointer_start.set(None);
+        let time_taken = Date::new_0().get_time()
+            - drag_start_time.with(|t| t.as_ref().map(|t| t.get_time()).unwrap_or(0.0));
+        let velocity = swipe_amount.with(|a| a.abs() as f64) / time_taken;
+
+        if swipe_amount.with(|a| a.abs() >= 20) || velocity > 0.11 {
+            offset_before_remove.set(offset());
+            delete_toast();
+            swipe_out.set(true);
+            return;
+        };
+
+        swipe_amount.set(0);
+        swiping.set(false);
+    };
+
+    let handle_pointermove = move |ev: PointerEvent| {
+        if !toast.options.dismissible {
+            return;
+        };
+        let _pointer_start = if let Some(pointer_start) = pointer_start() {
+            pointer_start
+        } else {
+            return;
+        };
+
+        let y_position = ev.client_y() - _pointer_start.y;
+        let x_position = ev.client_x() - _pointer_start.x;
+
+        let clamped_y = match position {
+            ToasterPosition::TopLeft | ToasterPosition::TopCenter | ToasterPosition::TopRight => {
+                min(0, y_position)
+            }
+            ToasterPosition::BottomRight
+            | ToasterPosition::BottomCenter
+            | ToasterPosition::BottomLeft => max(0, y_position),
+        };
+        let swipe_start_threshold = if ev.pointer_type() == "touch" { 10 } else { 2 };
+        let is_allowed_to_swipe = clamped_y.abs() > swipe_start_threshold;
+
+        if is_allowed_to_swipe {
+            swipe_amount.set(y_position);
+        } else if x_position.abs() > swipe_start_threshold {
+            pointer_start.set(None);
+        }
+    };
 
     view! {
         <li
@@ -135,6 +224,10 @@ pub fn ToastContainer(
             style=("--z-index", move || num_toasts() - index())
             style=("--offset", move || format!("{}px", offset()))
             style=("--initial-height", move || if expand_by_default {"auto".to_string()} else { format!("{}px", initial_height()) })
+            style=("--swipe-amount", move || format!("{}px", swipe_amount()))
+            on:pointerdown=handle_pointerdown
+            on:pointerup=handle_pointerup
+            on:pointermove=handle_pointermove
         >
             {toast.view}
         </li>
