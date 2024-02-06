@@ -8,6 +8,8 @@ description = "A Toaster component for Leptos"
 keywords = ["leptos", "toaster", "toast"]
 authors = ["Søren H. Hansen"]
 
+exclude = [".github"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
