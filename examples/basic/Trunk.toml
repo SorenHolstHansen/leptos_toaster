@@ -1,0 +1,5 @@
+[serve]
+port = 8080
+
+[watch]
+watch = ["../../src", "./src"]

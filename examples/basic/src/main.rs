@@ -1,5 +1,7 @@
 use leptos::*;
-use leptos_toaster::{Toast, ToastId, ToastVariant, Toaster, ToasterPosition, Toasts};
+use leptos_toaster::{
+    Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition, Toasts,
+};
 
 fn main() {
     mount_to_body(|| view! { <App /> })
@@ -8,9 +10,7 @@ fn main() {
 #[component]
 fn App() -> impl IntoView {
     view! {
-        <Toaster
-            position=ToasterPosition::BottomCenter
-        >
+        <Toaster>
             <h1>"Basic example"</h1>
 
             <Page />

@@ -714,6 +714,7 @@ name = "leptos_toaster"
 version = "0.1.0"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "leptos",
  "wasm-bindgen",
  "web-sys",
