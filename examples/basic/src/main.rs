@@ -33,10 +33,7 @@ fn Page() -> impl IntoView {
                 />
             },
             Some(toast_id),
-            Some(ToastOptions {
-                duration: Some(std::time::Duration::from_secs(100)),
-                ..Default::default()
-            }),
+            None,
         );
     };
 

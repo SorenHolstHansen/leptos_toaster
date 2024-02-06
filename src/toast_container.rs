@@ -3,10 +3,7 @@ use crate::{
     ToastId, ToasterPosition,
 };
 use js_sys::Date;
-use leptos::{
-    leptos_dom::{helpers::TimeoutHandle, logging::console_log},
-    *,
-};
+use leptos::{leptos_dom::helpers::TimeoutHandle, *};
 use std::cmp::{max, min};
 use std::time::Duration;
 use wasm_bindgen::JsCast;
@@ -95,7 +92,7 @@ pub fn ToastContainer(
                 }
                 remove_toast(toast.id);
             },
-            std::time::Duration::from_millis(200),
+            Duration::from_millis(200),
         );
     };
 
@@ -137,7 +134,6 @@ pub fn ToastContainer(
 
         if let Some(target) = ev.target() {
             if let Some(element) = target.dyn_ref::<HtmlElement>() {
-                console_log("IN HERE");
                 let _ = element.set_pointer_capture(ev.pointer_id());
                 if element.tag_name() == "BUTTON" {
                     return;
