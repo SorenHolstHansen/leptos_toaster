@@ -115,7 +115,7 @@ pub fn ToastContainer(
     });
 
     create_effect(move |_| {
-        if let Ok(handle) = set_timeout_with_handle(move || delete_toast(), duration) {
+        if let Ok(handle) = set_timeout_with_handle(delete_toast, duration) {
             delete_timeout_handle.set(Some(handle));
         }
     });
