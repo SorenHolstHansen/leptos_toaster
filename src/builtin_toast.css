@@ -1,219 +1,31 @@
-.leptos-toaster {
-  position: fixed;
-  width: var(--width);
+.leptos-toast {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  outline: none;
-  z-index: 999999999;
-}
-
-.leptos-toaster[data-x-position='right'] {
-  right: max(var(--offset), env(safe-area-inset-right));
-}
-
-.leptos-toaster[data-x-position='left'] {
-  left: max(var(--offset), env(safe-area-inset-left));
-}
-
-.leptos-toaster[data-x-position='center'] {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.leptos-toaster[data-y-position='top'] {
-  top: max(var(--offset), env(safe-area-inset-top));
-}
-
-.leptos-toaster[data-y-position='bottom'] {
-  bottom: max(var(--offset), env(safe-area-inset-bottom));
-}
-
-.leptos-toast-container {
-  --y: translateY(100%);
-  --lift-amount: calc(var(--lift) * var(--gap));
-  z-index: var(--z-index);
-  position: absolute;
-  opacity: 0;
-  transform: var(--y);
-  /* https://stackoverflow.com/questions/48124372/pointermove-event-not-working-with-touch-why-not */
-  touch-action: none;
-  will-change: transform, opacity, height;
-  transition:
-    transform 400ms,
-    opacity 400ms,
-    height 400ms,
-    box-shadow 200ms;
-  box-sizing: border-box;
-  outline: none;
-  overflow-wrap: anywhere;
-}
-
-.leptos-toast-container[data-y-position='top'] {
-  top: 0;
-  --y: translateY(-100%);
-  --lift: 1;
-  --lift-amount: calc(1 * var(--gap));
-}
-
-.leptos-toast-container[data-y-position='bottom'] {
-  bottom: 0;
-  --y: translateY(100%);
-  --lift: -1;
-  --lift-amount: calc(var(--lift) * var(--gap));
-}
-
-/* Leave a ghost div to avoid setting hover to false when swiping out */
-.leptos-toast-container[data-swiping='true']:before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 100%;
-  z-index: -1;
-}
-
-.leptos-toast-container[data-y-position='top'][data-swiping='true']:before {
-  /* y 50% needed to distribute height additional height evenly */
-  bottom: 50%;
-  transform: scaleY(3) translateY(50%);
-}
-
-.leptos-toast-container[data-y-position='bottom'][data-swiping='true']:before {
-  /* y -50% needed to distribute height additional height evenly */
-  top: 50%;
-  transform: scaleY(3) translateY(-50%);
-}
-
-/* Leave a ghost div to avoid setting hover to false when transitioning out */
-.leptos-toast-container[data-swiping='false'][data-removed='true']:before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: scaleY(2);
-}
-
-/* Needed to avoid setting hover to false when inbetween toasts */
-.leptos-toast-container:after {
-  content: '';
-  position: absolute;
-  left: 0;
-  height: calc(var(--gap) + 1px);
-  bottom: 100%;
-  width: 100%;
-}
-
-.leptos-toast-container[data-mounted='true'] {
-  --y: translateY(0);
-  opacity: 1;
-}
-
-.leptos-toast-container[data-expanded='false'][data-front='false'] {
-  --scale: var(--toasts-before) * 0.05 + 1;
-  --y: translateY(calc(var(--lift-amount) * var(--toasts-before))) scale(calc(-1 * var(--scale)));
-  height: var(--front-toast-height);
-}
-
-.leptos-toast-container > * {
-  transition: opacity 400ms;
-}
-
-.leptos-toast-container[data-expanded='false'][data-front='false'][data-styled='true'] > * {
-  opacity: 0;
-}
-
-.leptos-toast-container[data-visible='false'] {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.leptos-toast-container[data-mounted='true'][data-expanded='true'] {
-  --y: translateY(calc(var(--lift) * var(--offset)));
-  height: var(--initial-height);
-}
-
-.leptos-toast-container[data-removed='true'][data-front='true'][data-swipe-out='false'] {
-  --y: translateY(calc(var(--lift) * -100%));
-  opacity: 0;
-}
-
-.leptos-toast-container[data-removed='true'][data-front='false'][data-swipe-out='false'][data-expanded='true'] {
-  --y: translateY(calc(var(--lift) * var(--offset) + var(--lift) * -100%));
-  opacity: 0;
-}
-
-.leptos-toast-container[data-removed='true'][data-front='false'][data-swipe-out='false'][data-expanded='false'] {
-  --y: translateY(40%);
-  opacity: 0;
-  transition:
-    transform 500ms,
-    opacity 200ms;
-}
-
-/* Bump up the height to make sure hover state doesn't get set to false */
-.leptos-toast-container[data-removed='true'][data-front='false']:before {
-  height: calc(var(--initial-height) + 20%);
-}
-
-.leptos-toast-container[data-swiping='true'] {
-  transform: var(--y) translateY(var(--swipe-amount, 0px));
-  transition: none;
-}
-
-.leptos-toast-container[data-swipe-out='true'][data-y-position='bottom'],
-.leptos-toast-container[data-swipe-out='true'][data-y-position='top'] {
-  animation: swipe-out 200ms ease-out forwards;
-}
-
-@keyframes swipe-out {
-  from {
-    transform: translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount)));
-    opacity: 1;
-  }
-
-  to {
-    transform: translateY(calc(var(--lift) * var(--offset) + var(--swipe-amount) + var(--lift) * -100%));
-    opacity: 0;
-  }
-}
-
-@media (max-width: 600px) {
-  .leptos-toaster {
-    position: fixed;
-    --mobile-offset: 16px;
-    right: var(--mobile-offset);
-    left: var(--mobile-offset);
-    width: 100%;
-  }
-
-  .leptos-toaster .leptos-toast-container {
-    left: 0;
-    right: 0;
-    width: calc(100% - 32px);
-  }
-
-  .leptos-toaster[data-x-position='left'] {
-    left: var(--mobile-offset);
-  }
-
-  .leptos-toaster[data-y-position='bottom'] {
-    bottom: 20px;
-  }
-
-  .leptos-toaster[data-y-position='top'] {
-    top: 20px;
-  }
-
-  .leptos-toaster[data-x-position='center'] {
-    left: var(--mobile-offset);
-    right: var(--mobile-offset);
-    transform: none;
-  }
-}
-
-/* TOAST */
-.leptos-toaster {
+  font-size: 13px;
+  padding: 16px; 
+  background: var(--normal-bg); 
+  color: var(--normal-text);
+  border: 1px solid hsl(0, 0%, 93%); 
+  border-radius: 8px; 
+  box-shadow: 0 4px 12px #0000001a; 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+  width: 356px;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica Neue,
+    Arial,
+    Noto Sans,
+    sans-serif,
+    Apple Color Emoji,
+    Segoe UI Emoji,
+    Segoe UI Symbol,
+    Noto Color Emoji;
   --gray1: hsl(0, 0%, 99%);
   --gray2: hsl(0, 0%, 97.3%);
   --gray3: hsl(0, 0%, 95.1%);
@@ -229,7 +41,7 @@
   --border-radius: 8px;
 }
 
-.leptos-toaster[data-theme='light'] {
+.leptos-toast[data-theme='light'] {
   --normal-bg: #fff;
   --normal-border: var(--gray4);
   --normal-text: var(--gray12);
@@ -251,19 +63,19 @@
   --error-text: hsl(360, 100%, 45%);
 }
 
-.leptos-toaster[data-theme='light'] .leptos-toast-container[data-invert='true'] {
+.leptos-toast[data-theme='light'][data-invert='true'] {
   --normal-bg: #000;
   --normal-border: hsl(0, 0%, 20%);
   --normal-text: var(--gray1);
 }
 
-.leptos-toaster[data-theme='dark'] .leptos-toast-container[data-invert='true'] {
+.leptos-toast[data-theme='dark'][data-invert='true'] {
   --normal-bg: #fff;
   --normal-border: var(--gray3);
   --normal-text: var(--gray12);
 }
 
-.leptos-toaster[data-theme='dark'] {
+.leptos-toast[data-theme='dark'] {
   --normal-bg: #000;
   --normal-border: hsl(0, 0%, 20%);
   --normal-text: var(--gray1);
@@ -285,55 +97,55 @@
   --error-text: hsl(358, 100%, 81%);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='success'] {
+.leptos-toast[data-rich-colors='true'][data-type='success'] {
   background: var(--success-bg);
   border-color: var(--success-border);
   color: var(--success-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='success'] [data-close-button] {
+.leptos-toast[data-rich-colors='true'][data-type='success'] .leptos-toast-close-button {
   background: var(--success-bg);
   border-color: var(--success-border);
   color: var(--success-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='info'] {
+.leptos-toast[data-rich-colors='true'][data-type='info'] {
   background: var(--info-bg);
   border-color: var(--info-border);
   color: var(--info-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='info'] [data-close-button] {
+.leptos-toast[data-rich-colors='true'][data-type='info'] .leptos-toast-close-button {
   background: var(--info-bg);
   border-color: var(--info-border);
   color: var(--info-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='warning'] {
+.leptos-toast[data-rich-colors='true'][data-type='warning'] {
   background: var(--warning-bg);
   border-color: var(--warning-border);
   color: var(--warning-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='warning'] [data-close-button] {
+.leptos-toast[data-rich-colors='true'][data-type='warning'] .leptos-toast-close-button {
   background: var(--warning-bg);
   border-color: var(--warning-border);
   color: var(--warning-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='error'] {
+.leptos-toast[data-rich-colors='true'][data-type='error'] {
   background: var(--error-bg);
   border-color: var(--error-border);
   color: var(--error-text);
 }
 
-[data-rich-colors='true'] .leptos-toast-container[data-type='error'] [data-close-button] {
+.leptos-toast[data-rich-colors='true'][data-type='error'] .leptos-toast-close-button {
   background: var(--error-bg);
   border-color: var(--error-border);
   color: var(--error-text);
 }
 
-.leptos-toast-container [data-close-button] {
+.leptos-toast .leptos-toast-close-button {
   position: absolute;
   right: 8px;
   top: 8px;
@@ -356,10 +168,6 @@
     border-color 200ms;
 }
 
-.leptos-toast {
-  font-size: 13px;
-}
-
 .leptos-toast-description {
   font-weight: 400;
   line-height: 1.4;
@@ -370,4 +178,25 @@
   font-weight: 500;
   line-height: 1.5;
   color: inherit;
+}
+
+.leptos-toast .leptos-toast-icon {
+  display: flex;
+  height: 20px;
+  width: 20px;
+  position: relative;
+  justify-content: flex-start;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: var(--toast-icon-margin-start);
+  margin-right: var(--toast-icon-margin-end);
+}
+
+.leptos-toast .leptos-toast-icon > * {
+  flex-shrink: 0;
+}
+
+.leptos-toast .leptos-toast-icon svg {
+  margin-left: var(--toast-svg-margin-start);
+  margin-right: var(--toast-svg-margin-end);
 }
