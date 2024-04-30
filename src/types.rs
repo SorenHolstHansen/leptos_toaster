@@ -30,7 +30,7 @@ pub struct Toast {
     pub options: ToastOptions,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Toasts {
     // pub(crate) toasts: ReadSignal<Vec<Toast>>,
     pub(crate) set_toasts: WriteSignal<Vec<Toast>>,
