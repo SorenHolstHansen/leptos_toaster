@@ -4,7 +4,7 @@ use crate::{
     types::{HeightT, Toasts},
     ToastId, ToasterPosition,
 };
-use leptos::*;
+use leptos::{leptos_dom::logging::console_log, *};
 use std::time::Duration;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, PointerEvent};
@@ -44,6 +44,10 @@ pub fn Toaster(
         });
     });
 
+    create_effect(move |_| {
+        console_log(&format!("POSITION {:#?}", position));
+    });
+
     let on_pointerdown = move |e: PointerEvent| {
         let mut is_dismissible = true;
         if let Some(target) = e.target() {
@@ -61,57 +65,74 @@ pub fn Toaster(
     view! {
         {children()}
 
-        <Show
-            when=move || !toasts.with(|t| t.is_empty())
-        >
-        <section
-            aria-label="Notifications"
-            tab-index={-1}
-        >
-            <ol
-                class="leptos-toaster"
-                tab-index={-1}
-                data-y-position=position.y()
-                data-x-position=position.x()
-                style=("--gap", format!("{}px", gap))
-                style=("--width", "356px")
-                style=("--offset", "32px")
-                style=("--front-toast-height", move || format!("{}px", heights.with(|heights| heights.first().map(|h| h.height).unwrap_or(0.0))))
-                on:mouseenter=move |_| set_expanded(true)
-                on:mousemove=move |_| set_expanded(true)
-                on:mouseleave=move |_| if !interacting() { set_expanded(false) }
-                on:pointerdown=on_pointerdown
-                on:pointerup=move |_| interacting.set(true)
-            >
-                <For
-                    each=toasts
-                    key=move |toast| toast.id
-                    children=move |toast| {
-                        // Doing this since we
-                        // 1. don't want the view to rerender, and in turn, the ToastContainer to rerender when a new toast is added, because that makes the internal logic more complex. For instance the timeout to delete the toast after the duration would have to keep track of the timeout handle between rerenders. And
-                        // 2. enumerating the toasts vec will not give a reactive index, so we need to get it like this
-                        let index = create_memo(move |_| {
-                            toasts.with(|toasts| toasts.iter().position(|t| t.id == toast.id).unwrap_or_default())
-                        });
-                        view! {
-                            <ToastContainer
-                                index=Signal::derive(move || index.get())
-                                toast
-                                visible_toasts
-                                position
-                                duration_from_toaster=duration
-                                remove_toast=remove_toast
-                                expanded
-                                expand_by_default=expand
-                                num_toasts=Signal::derive(move || toasts.with(|t| t.len()))
+        <Show when=move || !toasts.with(|t| t.is_empty())>
+            <section aria-label="Notifications" tab-index=-1>
+                <ol
+                    class="leptos-toaster"
+                    tab-index=-1
+                    data-y-position=position.y()
+                    data-x-position=position.x()
+                    style=("--gap", format!("{}px", gap))
+                    style=("--width", "356px")
+                    style=("--offset", "32px")
+                    style=(
+                        "--front-toast-height",
+                        move || {
+                            format!(
+                                "{}px",
                                 heights
-                                gap
-                            />
+                                    .with(|heights| {
+                                        heights.first().map(|h| h.height).unwrap_or(0.0)
+                                    }),
+                            )
+                        },
+                    )
+                    on:mouseenter=move |_| set_expanded(true)
+                    on:mousemove=move |_| set_expanded(true)
+                    on:mouseleave=move |_| {
+                        if !interacting() {
+                            set_expanded(false)
                         }
                     }
-                />
-            </ol>
-        </section>
+                    on:pointerdown=on_pointerdown
+                    on:pointerup=move |_| interacting.set(true)
+                >
+                    <For
+                        each=toasts
+                        key=move |toast| toast.id
+                        children=move |toast| {
+                            let index = create_memo(move |_| {
+                                toasts
+                                    .with(|toasts| {
+                                        toasts
+                                            .iter()
+                                            .position(|t| t.id == toast.id)
+                                            .unwrap_or_default()
+                                    })
+                            });
+                            view! {
+                                // Doing this since we
+                                // 1. don't want the view to rerender, and in turn, the ToastContainer to rerender when a new toast is added, because that makes the internal logic more complex. For instance the timeout to delete the toast after the duration would have to keep track of the timeout handle between rerenders. And
+                                // 2. enumerating the toasts vec will not give a reactive index, so we need to get it like this
+                                <ToastContainer
+                                    index=Signal::derive(move || index.get())
+                                    toast
+                                    visible_toasts
+                                    position
+                                    duration_from_toaster=duration
+                                    remove_toast=remove_toast
+                                    expanded
+                                    expand_by_default=expand
+                                    num_toasts=Signal::derive(move || toasts.with(|t| t.len()))
+                                    heights
+                                    gap
+                                />
+                            }
+                        }
+                    />
+
+                </ol>
+            </section>
         </Show>
     }
 }

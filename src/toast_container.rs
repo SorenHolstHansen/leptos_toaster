@@ -3,7 +3,10 @@ use crate::{
     ToastId, ToasterPosition,
 };
 use js_sys::Date;
-use leptos::{leptos_dom::helpers::TimeoutHandle, *};
+use leptos::{
+    leptos_dom::{helpers::TimeoutHandle, logging::console_log},
+    *,
+};
 use std::cmp::{max, min};
 use std::time::Duration;
 use wasm_bindgen::JsCast;
@@ -49,6 +52,7 @@ pub fn ToastContainer(
     let offset = move || (height_index() * gap) as f64 + toasts_height_before();
     let is_expanded = move || expanded() || (expand_by_default && mounted());
     let duration = toast.options.duration.unwrap_or(duration_from_toaster);
+    let position = toast.options.position.unwrap_or(position);
 
     let initial_height = RwSignal::new(0.0);
     let offset_before_remove = RwSignal::new(0.0);
@@ -198,6 +202,10 @@ pub fn ToastContainer(
         }
     };
 
+    create_effect(move |_| {
+        console_log(&format!("POS {:#?}", position));
+    });
+
     view! {
         <li
             aria-atomic="true"
@@ -219,7 +227,16 @@ pub fn ToastContainer(
             style=("--toasts-before", index)
             style=("--z-index", move || num_toasts() - index())
             style=("--offset", move || format!("{}px", offset()))
-            style=("--initial-height", move || if expand_by_default {"auto".to_string()} else { format!("{}px", initial_height()) })
+            style=(
+                "--initial-height",
+                move || {
+                    if expand_by_default {
+                        "auto".to_string()
+                    } else {
+                        format!("{}px", initial_height())
+                    }
+                },
+            )
             style=("--swipe-amount", move || format!("{}px", swipe_amount()))
             on:pointerdown=handle_pointerdown
             on:pointerup=handle_pointerup
