@@ -1,6 +1,6 @@
 [package]
 name = "leptos_toaster"
-version = "0.1.4"
+version = "0.1.3"
 edition = "2021"
 repository = "https://github.com/SorenHolstHansen/leptos_toaster"
 license = "MIT"
@@ -13,13 +13,14 @@ exclude = [".github"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cfg-if = "1.0.0"
 js-sys = "0.3"
-leptos = { version = "0.6", features = ["nightly"] }
+leptos = "0.6"
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["EventTarget", "HtmlElement", "DomRect", "Element"] }
 
 [features]
 # Enables the built-in <Toast /> component
 builtin_toast = []
-
+csr = ["leptos/csr"]
+ssr = ["leptos/ssr"]
+hydrate = ["leptos/hydrate"]
