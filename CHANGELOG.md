@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.5...v0.1.6) - 2024-05-02
+
+### Other
+- fully go away from nightly
+- resolve merge conflict
+- Merge branch 'main' of github.com:SorenHolstHansen/leptos_toaster
+- remove nightly, add feature flags, remove cfg_if
+
 ## [0.1.5](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.4...v0.1.5) - 2024-05-02
 
 ### Other
