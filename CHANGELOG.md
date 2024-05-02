@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.3...v0.1.4) - 2024-05-02
+
+### Other
+- include lock
+- stuff
+- Merge branch 'main' into styling
+- remove Cargo.lock
+
 ## [0.1.3](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.2...v0.1.3) - 2024-03-09
 
 ### Other
