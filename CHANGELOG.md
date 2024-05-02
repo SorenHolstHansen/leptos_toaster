@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.4...v0.1.5) - 2024-05-02
+
+### Other
+- Merge branch 'main' of github.com:SorenHolstHansen/leptos_toaster
+- more lean deps
+
 ## [0.1.4](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.3...v0.1.4) - 2024-05-02
 
 ### Other
