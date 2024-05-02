@@ -1,4 +1,4 @@
 target/
 dist/
 .DS_Store
-Cargo.lock
+./Cargo.lock
