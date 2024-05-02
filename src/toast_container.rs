@@ -3,10 +3,7 @@ use crate::{
     ToastId, ToasterPosition,
 };
 use js_sys::Date;
-use leptos::{
-    leptos_dom::{helpers::TimeoutHandle, logging::console_log},
-    *,
-};
+use leptos::{leptos_dom::helpers::TimeoutHandle, *};
 use std::cmp::{max, min};
 use std::time::Duration;
 use wasm_bindgen::JsCast;
@@ -30,8 +27,8 @@ pub fn ToastContainer(
     let removed = RwSignal::new(false);
     let swiping = RwSignal::new(false);
     let swipe_out = RwSignal::new(false);
-    let is_visible = move || index() < visible_toasts;
-    let is_front = move || index() == 0;
+    let is_visible = move || index.get() < visible_toasts;
+    let is_front = move || index.get() == 0;
     let height_index = move || {
         heights.with(|heights| {
             heights
@@ -50,7 +47,7 @@ pub fn ToastContainer(
         })
     };
     let offset = move || (height_index() * gap) as f64 + toasts_height_before();
-    let is_expanded = move || expanded() || (expand_by_default && mounted());
+    let is_expanded = move || expanded.get() || (expand_by_default && mounted.get());
     let duration = toast.options.duration.unwrap_or(duration_from_toaster);
     let position = toast.options.position.unwrap_or(position);
 
@@ -94,7 +91,7 @@ pub fn ToastContainer(
                 if let Some(handle) = delete_timeout_handle.get() {
                     handle.clear();
                 }
-                remove_toast(toast.id);
+                remove_toast.call(toast.id);
             },
             Duration::from_millis(200),
         );
@@ -152,7 +149,7 @@ pub fn ToastContainer(
     };
 
     let handle_pointerup = move |_| {
-        if swipe_out() || !toast.options.dismissible {
+        if swipe_out.get() || !toast.options.dismissible {
             return;
         }
         pointer_start.set(None);
@@ -175,7 +172,7 @@ pub fn ToastContainer(
         if !toast.options.dismissible {
             return;
         };
-        let _pointer_start = if let Some(pointer_start) = pointer_start() {
+        let _pointer_start = if let Some(pointer_start) = pointer_start.get() {
             pointer_start
         } else {
             return;
@@ -202,30 +199,26 @@ pub fn ToastContainer(
         }
     };
 
-    create_effect(move |_| {
-        console_log(&format!("POS {:#?}", position));
-    });
-
     view! {
         <li
             aria-atomic="true"
             role="status"
             tab-index=0
             class="leptos-toast-container"
-            data-mounted=move || mounted().to_string()
-            data-removed=move || removed().to_string()
+            data-mounted=move || mounted.get().to_string()
+            data-removed=move || removed.get().to_string()
             data-visible=move || is_visible().to_string()
             data-y-position=position.y()
             data-x-position=position.x()
             data-index=index
             data-front=move || is_front().to_string()
-            data-swiping=move || swiping().to_string()
-            data-swipe-out=move || swipe_out().to_string()
+            data-swiping=move || swiping.get().to_string()
+            data-swipe-out=move || swipe_out.get().to_string()
             data-expanded=move || is_expanded().to_string()
             data-dismissible=toast.options.dismissible.to_string()
             style=("--index", index)
             style=("--toasts-before", index)
-            style=("--z-index", move || num_toasts() - index())
+            style=("--z-index", move || num_toasts.get() - index.get())
             style=("--offset", move || format!("{}px", offset()))
             style=(
                 "--initial-height",
@@ -233,11 +226,11 @@ pub fn ToastContainer(
                     if expand_by_default {
                         "auto".to_string()
                     } else {
-                        format!("{}px", initial_height())
+                        format!("{}px", initial_height.get())
                     }
                 },
             )
-            style=("--swipe-amount", move || format!("{}px", swipe_amount()))
+            style=("--swipe-amount", move || format!("{}px", swipe_amount.get()))
             on:pointerdown=handle_pointerdown
             on:pointerup=handle_pointerup
             on:pointermove=handle_pointermove

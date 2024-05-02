@@ -4,7 +4,7 @@ use crate::{
     types::{HeightT, Toasts},
     ToastId, ToasterPosition,
 };
-use leptos::{leptos_dom::logging::console_log, *};
+use leptos::*;
 use std::time::Duration;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, PointerEvent};
@@ -32,7 +32,7 @@ pub fn Toaster(
     create_effect(move |_| {
         // Ensure expanded is always false when no toasts are present / only one left
         if toasts.with(|t| t.len() <= 1) {
-            set_expanded(false);
+            set_expanded.set(false);
         }
     });
 
@@ -42,10 +42,6 @@ pub fn Toaster(
                 toasts.remove(index);
             }
         });
-    });
-
-    create_effect(move |_| {
-        console_log(&format!("POSITION {:#?}", position));
     });
 
     let on_pointerdown = move |e: PointerEvent| {
@@ -87,18 +83,18 @@ pub fn Toaster(
                             )
                         },
                     )
-                    on:mouseenter=move |_| set_expanded(true)
-                    on:mousemove=move |_| set_expanded(true)
+                    on:mouseenter=move |_| set_expanded.set(true)
+                    on:mousemove=move |_| set_expanded.set(true)
                     on:mouseleave=move |_| {
-                        if !interacting() {
-                            set_expanded(false)
+                        if !interacting.get() {
+                            set_expanded.set(false)
                         }
                     }
                     on:pointerdown=on_pointerdown
                     on:pointerup=move |_| interacting.set(true)
                 >
                     <For
-                        each=toasts
+                        each=move || toasts.get()
                         key=move |toast| toast.id
                         children=move |toast| {
                             let index = create_memo(move |_| {
