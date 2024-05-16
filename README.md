@@ -4,6 +4,18 @@
 
 A Toaster component for Leptos heavily inspired by [sonner](https://sonner.emilkowal.ski/)
 
+## SSR
+If using SSR don't forget to set the features in your own Project correctly
+```toml
+[features]
+ssr = ["leptos_toaster/ssr"]
+hydrate = ["leptos_toaster/hydrate"]
+
+```
+
+
+
+
 ## Usage
 Somewhere, probably near the top of your component tree, add the Toaster component
 ```rust
@@ -15,7 +27,6 @@ view! {
 	</Toaster>
 }
 ```
-
 and then whenever you need a toast, do
 
 ```rust
