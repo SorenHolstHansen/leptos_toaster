@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.6...v0.1.7) - 2024-05-20
+
+### Other
+- Fixed Issue with SSR By adding leptos_meta as dependency to ssr mode. Also rewrote Readme to signal it better how to use leptos_toaster when using ssr
+
 ## [0.1.6](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.5...v0.1.6) - 2024-05-02
 
 ### Other
