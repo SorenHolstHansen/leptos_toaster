@@ -15,6 +15,7 @@ exclude = [".github"]
 [dependencies]
 js-sys = "0.3"
 leptos = "0.6"
+leptos_meta = { version = "0.6", optional = true }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["EventTarget", "HtmlElement", "DomRect", "Element"] }
 
@@ -22,5 +23,5 @@ web-sys = { version = "0.3", features = ["EventTarget", "HtmlElement", "DomRect"
 # Enables the built-in <Toast /> component
 builtin_toast = []
 csr = ["leptos/csr"]
-ssr = ["leptos/ssr"]
+ssr = ["dep:leptos_meta","leptos/ssr","leptos_meta/ssr"]
 hydrate = ["leptos/hydrate"]
