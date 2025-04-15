@@ -1,5 +1,4 @@
 use cfg_if::cfg_if;
-use leptos::*;
 pub fn mount_style(id: &str, content: &'static str) {
     let id = format!("leptos-color-id-{id}");
     cfg_if! {
