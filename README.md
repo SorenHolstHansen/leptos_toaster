@@ -41,7 +41,7 @@ let create_toast = move || {
 			<Toast
 				toast_id
 				variant=ToastVariant::Info
-				title=|| view! {"My toast"}.into_view()
+				title=|| view! {"My toast"}
 			/>
 		},
 		Some(toast_id),

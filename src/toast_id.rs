@@ -67,7 +67,7 @@ impl ToastId {
     /// Tryes to parse the string to a ToastId
     /// This can fail if the string is too long: The string should be at most 64 long
     pub fn try_from_str(s: &str) -> Result<Self, ToastIdFromStrError> {
-        if s.bytes().len() > BYTES_LEN {
+        if s.len() > BYTES_LEN {
             return Err(ToastIdFromStrError::StrTooLong);
         }
 

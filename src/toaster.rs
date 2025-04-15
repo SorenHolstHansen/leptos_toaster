@@ -26,7 +26,7 @@ pub fn Toaster(
     let (expanded, set_expanded) = signal(false);
     let interacting = RwSignal::new(false);
     let heights = RwSignal::<Vec<HeightT>>::new(Vec::new());
-    let context = use_context::<Toasts>().unwrap_or_else(|| provide_toasts());
+    let context = use_context::<Toasts>().unwrap_or_else(provide_toasts);
     let (toasts, set_toasts) = (context.toasts, context.set_toasts);
 
     Effect::new(move |_| {

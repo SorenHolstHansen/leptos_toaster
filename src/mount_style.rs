@@ -1,7 +1,5 @@
 use cfg_if::cfg_if;
-use html::ElementChild as _;
 use leptos::*;
-use prelude::CustomAttribute;
 pub fn mount_style(id: &str, content: &'static str) {
     let id = format!("leptos-color-id-{id}");
     cfg_if! {

@@ -54,7 +54,7 @@ pub fn ToastContainer(
     let initial_height = RwSignal::new(0.0);
     let offset_before_remove = RwSignal::new(0.0);
 
-    create_effect(move |_| {
+    Effect::new(move |_| {
         if let Some(document) = window().document() {
             if let Ok(Some(toast_container_node)) =
                 document.query_selector(".leptos-toast-container")
@@ -108,11 +108,11 @@ pub fn ToastContainer(
         }
     });
 
-    create_effect(move |_| {
+    Effect::new(move |_| {
         mounted.set(true);
     });
 
-    create_effect(move |_| {
+    Effect::new(move |_| {
         if let Ok(handle) = set_timeout_with_handle(delete_toast, duration) {
             delete_timeout_handle.set(Some(handle));
         }

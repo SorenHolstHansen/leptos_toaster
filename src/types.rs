@@ -69,6 +69,12 @@ impl Toasts {
     }
 }
 
+impl Default for Toasts {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Possible positions for the toasts
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum ToasterPosition {
