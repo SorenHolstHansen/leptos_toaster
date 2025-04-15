@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 use std::time::Duration;
 use wasm_bindgen::JsValue;
 
@@ -26,7 +26,7 @@ impl Default for ToastOptions {
 #[derive(Clone)]
 pub struct Toast {
     pub id: ToastId,
-    pub view: View,
+    pub view: ViewFn,
     pub options: ToastOptions,
 }
 
@@ -38,16 +38,20 @@ pub struct Toasts {
 
 impl Toasts {
     /// Create a new toast
-    pub fn toast(&self, toast: impl IntoView, id: Option<ToastId>, options: Option<ToastOptions>) {
+    pub fn toast(
+        &self,
+        toast: impl Into<ViewFn>,
+        id: Option<ToastId>,
+        options: Option<ToastOptions>,
+    ) {
         let id = id.unwrap_or_else(ToastId::new);
         let toast = Toast {
             id,
-            view: toast.into_view(),
+            view: toast.into(),
             options: options.unwrap_or_default(),
         };
-        self.set_toasts.update(|toasts| {
-            toasts.insert(0, toast);
-        });
+        let mut toasts = self.set_toasts.write();
+        toasts.insert(0, toast);
     }
 
     pub fn dismiss(&self, toast_id: &ToastId) {

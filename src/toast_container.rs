@@ -3,7 +3,7 @@ use crate::{
     ToastId, ToasterPosition,
 };
 use js_sys::Date;
-use leptos::{leptos_dom::helpers::TimeoutHandle, *};
+use leptos::{ev, leptos_dom::helpers::TimeoutHandle, prelude::*};
 use std::cmp::{max, min};
 use std::time::Duration;
 use wasm_bindgen::JsCast;
@@ -91,7 +91,7 @@ pub fn ToastContainer(
                 if let Some(handle) = delete_timeout_handle.get() {
                     handle.clear();
                 }
-                remove_toast.call(toast.id);
+                remove_toast.run(toast.id);
             },
             Duration::from_millis(200),
         );
@@ -123,7 +123,7 @@ pub fn ToastContainer(
         x: i32,
         y: i32,
     }
-    let drag_start_time = RwSignal::<Option<Date>>::new(None);
+    let drag_start_time = RwSignal::<Option<Date>, LocalStorage>::new_local(None);
     let pointer_start = RwSignal::<Option<Point>>::new(None);
     let swipe_amount = RwSignal::<i32>::new(0);
     let handle_pointerdown = move |ev: PointerEvent| {
@@ -216,9 +216,9 @@ pub fn ToastContainer(
             data-swipe-out=move || swipe_out.get().to_string()
             data-expanded=move || is_expanded().to_string()
             data-dismissible=toast.options.dismissible.to_string()
-            style=("--index", index)
-            style=("--toasts-before", index)
-            style=("--z-index", move || num_toasts.get() - index.get())
+            style=("--index", move || index.get().to_string())
+            style=("--toasts-before", move || index.get().to_string())
+            style=("--z-index", move || (num_toasts.get() - index.get()).to_string())
             style=("--offset", move || format!("{}px", offset()))
             style=(
                 "--initial-height",
@@ -235,7 +235,7 @@ pub fn ToastContainer(
             on:pointerup=handle_pointerup
             on:pointermove=handle_pointermove
         >
-            {toast.view}
+            {toast.view.run()}
         </li>
     }
 }

@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 use leptos_toaster::{
     Theme, Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition, Toasts,
 };
@@ -28,7 +28,7 @@ fn Page() -> impl IntoView {
 
     let create_custom_toast = move |_| {
         toast_context.toast(
-            view! {
+            || view! {
                 <div class="bg-gradient-to-r from-cyan-500 to-blue-500 rounded text-white p-4">"Custom toast"</div>
             },
             None,
@@ -39,16 +39,18 @@ fn Page() -> impl IntoView {
     let create_toast = move |_| {
         let toast_id = ToastId::new();
         toast_context.toast(
-            view! {
-                <Toast
-                    toast_id
-                    variant=variant()
-                    theme=toast_theme()
-                    invert=invert()
-                    rich_colors=use_rich_colors()
-                    title=view! { "Title" }.into_view()
-                    description=Some(view! { "Description" }.into_view())
-                />
+            move || {
+                view! {
+                    <Toast
+                        toast_id
+                        variant=variant()
+                        theme=toast_theme()
+                        invert=invert()
+                        rich_colors=use_rich_colors()
+                        title=move || view! { "Title" }
+                        description=Some(ViewFn::from(move || view! { "Description" }))
+                    />
+                }
             },
             Some(toast_id),
             Some(ToastOptions {

@@ -4,7 +4,7 @@ use crate::{
     types::{HeightT, Toasts},
     ToastId, ToasterPosition,
 };
-use leptos::*;
+use leptos::prelude::*;
 use std::time::Duration;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, PointerEvent};
@@ -23,13 +23,13 @@ pub fn Toaster(
     children: Children,
 ) -> impl IntoView {
     mount_style("toaster", include_str!("./style.css"));
-    let (toasts, set_toasts) = create_signal(Vec::new());
-    let (expanded, set_expanded) = create_signal(false);
+    let (toasts, set_toasts) = signal(Vec::new());
+    let (expanded, set_expanded) = signal(false);
     let interacting = RwSignal::new(false);
     let heights = RwSignal::<Vec<HeightT>>::new(Vec::new());
 
     provide_context(Toasts { set_toasts });
-    create_effect(move |_| {
+    Effect::new(move |_| {
         // Ensure expanded is always false when no toasts are present / only one left
         if toasts.with(|t| t.len() <= 1) {
             set_expanded.set(false);
@@ -97,7 +97,7 @@ pub fn Toaster(
                         each=move || toasts.get()
                         key=move |toast| toast.id
                         children=move |toast| {
-                            let index = create_memo(move |_| {
+                            let index = Memo::new(move |_| {
                                 toasts
                                     .with(|toasts| {
                                         toasts
