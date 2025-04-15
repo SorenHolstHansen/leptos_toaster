@@ -32,11 +32,17 @@ pub struct Toast {
 
 #[derive(Clone, Copy)]
 pub struct Toasts {
-    // pub(crate) toasts: ReadSignal<Vec<Toast>>,
+    pub(crate) toasts: ReadSignal<Vec<Toast>>,
     pub(crate) set_toasts: WriteSignal<Vec<Toast>>,
 }
 
 impl Toasts {
+    /// Create a new toasts
+    pub fn new() -> Self {
+        let (toasts, set_toasts) = signal(Vec::new());
+        Self { toasts, set_toasts }
+    }
+
     /// Create a new toast
     pub fn toast(
         &self,

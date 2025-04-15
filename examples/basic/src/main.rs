@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_toaster::{
-    Theme, Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition, Toasts,
+    provide_toasts, Theme, Toast, ToastId, ToastOptions, ToastVariant, Toaster, ToasterPosition,
+    Toasts,
 };
 
 fn main() {
@@ -9,10 +10,10 @@ fn main() {
 
 #[component]
 fn App() -> impl IntoView {
+    provide_toasts();
     view! {
-        <Toaster>
-            <Page/>
-        </Toaster>
+        <Toaster/>
+        <Page/>
     }
 }
 
