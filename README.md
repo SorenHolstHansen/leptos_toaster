@@ -37,12 +37,12 @@ let create_toast = move || {
 	toast_context.toast(
 		// This uses the built in toast component that requires the `builtin_toast` feature.
 		// You can use your own components here
-		view! { 
-			<Toast 
-				toast_id 
-				variant=ToastVariant::Info 
-				title=view! {"My toast"}.into_view() 
-			/> 
+		move || view! {
+			<Toast
+				toast_id
+				variant=ToastVariant::Info
+				title=|| view! {"My toast"}
+			/>
 		},
 		Some(toast_id),
 		None // options

@@ -1,5 +1,5 @@
 use crate::{mount_style::mount_style, types::dismiss_toast, ToastId};
-use leptos::*;
+use leptos::{either::EitherOf5, prelude::*};
 
 #[component]
 fn SuccessIcon() -> impl IntoView {
@@ -117,15 +117,18 @@ impl std::fmt::Display for Theme {
 #[component]
 pub fn Toast(
     #[prop(default = ToastVariant::Normal)] variant: ToastVariant,
-    title: View,
-    #[prop(default = None)] description: Option<View>,
+    #[prop(into)] title: ViewFn,
+    #[prop(default = None,into)] description: Option<ViewFn>,
     toast_id: ToastId,
     #[prop(default = true)] close_button: bool,
     #[prop(default = Theme::Light)] theme: Theme,
     #[prop(default = false)] invert: bool,
     #[prop(default = false)] rich_colors: bool,
 ) -> impl IntoView {
-    mount_style("builtin_toast", include_str!("./builtin_toast.css"));
+    mount_style(
+        "leptos-toaster-builtin_toast",
+        include_str!("./builtin_toast.css"),
+    );
 
     view! {
         <div
@@ -163,19 +166,19 @@ pub fn Toast(
             <Show when=move || variant != ToastVariant::Normal>
                 <div class="leptos-toast-icon">
                     {match variant {
-                        ToastVariant::Normal => view! {}.into_view(),
-                        ToastVariant::Success => view! { <SuccessIcon/> }.into_view(),
-                        ToastVariant::Info => view! { <InfoIcon/> }.into_view(),
-                        ToastVariant::Warning => view! { <WarningIcon/> }.into_view(),
-                        ToastVariant::Error => view! { <ErrorIcon/> }.into_view(),
+                        ToastVariant::Normal => EitherOf5::A(view! {}),
+                        ToastVariant::Success => EitherOf5::B(view! { <SuccessIcon/> }),
+                        ToastVariant::Info => EitherOf5::C(view! { <InfoIcon/> }),
+                        ToastVariant::Warning => EitherOf5::D(view! { <WarningIcon/> }),
+                        ToastVariant::Error => EitherOf5::E(view! { <ErrorIcon/> }),
                     }}
 
                 </div>
             </Show>
 
             <div>
-                <div class="leptos-toast-title">{title}</div>
-                <div class="leptos-toast-description">{description}</div>
+                <div class="leptos-toast-title">{title.run()}</div>
+                <div class="leptos-toast-description">{description.map(|v| v.run())}</div>
             </div>
         </div>
     }

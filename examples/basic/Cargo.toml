@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-leptos = { version = "0.6", features = ["nightly", "csr"] }
+leptos = { version = "0.7", features = ["nightly", "csr"] }
 leptos_toaster = { path = "../..", features = ["builtin_toast"] }

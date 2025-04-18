@@ -4,7 +4,7 @@ use crate::{
     types::{HeightT, Toasts},
     ToastId, ToasterPosition,
 };
-use leptos::*;
+use leptos::prelude::*;
 use std::time::Duration;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlElement, PointerEvent};
@@ -20,16 +20,16 @@ pub fn Toaster(
     /// The maximum amount of toasts that should be visible at any point
     #[prop(default = 3)]
     visible_toasts: usize,
-    children: Children,
+    #[prop(optional)] children: Option<Children>,
 ) -> impl IntoView {
     mount_style("toaster", include_str!("./style.css"));
-    let (toasts, set_toasts) = create_signal(Vec::new());
-    let (expanded, set_expanded) = create_signal(false);
+    let (expanded, set_expanded) = signal(false);
     let interacting = RwSignal::new(false);
     let heights = RwSignal::<Vec<HeightT>>::new(Vec::new());
+    let context = use_context::<Toasts>().unwrap_or_else(provide_toasts);
+    let (toasts, set_toasts) = (context.toasts, context.set_toasts);
 
-    provide_context(Toasts { set_toasts });
-    create_effect(move |_| {
+    Effect::new(move |_| {
         // Ensure expanded is always false when no toasts are present / only one left
         if toasts.with(|t| t.len() <= 1) {
             set_expanded.set(false);
@@ -59,7 +59,7 @@ pub fn Toaster(
     };
 
     view! {
-        {children()}
+        {children.map(|v| v())}
 
         <Show when=move || !toasts.with(|t| t.is_empty())>
             <section aria-label="Notifications" tab-index=-1>
@@ -97,7 +97,7 @@ pub fn Toaster(
                         each=move || toasts.get()
                         key=move |toast| toast.id
                         children=move |toast| {
-                            let index = create_memo(move |_| {
+                            let index = Memo::new(move |_| {
                                 toasts
                                     .with(|toasts| {
                                         toasts
@@ -131,4 +131,11 @@ pub fn Toaster(
             </section>
         </Show>
     }
+}
+
+/// Provide Toasts for a Toaster
+pub fn provide_toasts() -> Toasts {
+    let toasts = Toasts::new();
+    provide_context(toasts);
+    toasts
 }
