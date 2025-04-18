@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.7...v0.1.8) - 2025-04-18
+
+### Fixed
+
+- fixed linter 2.0
+- fixed linter
+
+### Other
+
+- Minor Changes to context handling
+- Updated to Leptos 0.7
+
 ## [0.1.7](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.6...v0.1.7) - 2024-05-20
 
 ### Other
