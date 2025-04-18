@@ -1054,7 +1054,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_toaster"
-version = "0.1.7"
+version = "0.2.0"
 dependencies = [
  "cfg-if",
  "js-sys",
