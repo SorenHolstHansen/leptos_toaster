@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.2.0...v0.3.0) - 2026-07-15
+
+### Other
+
+- Cargo.lock
+- bump version
+- Bump Leptos to version 0.8
+
 ## [0.1.7](https://github.com/SorenHolstHansen/leptos_toaster/compare/v0.1.6...v0.1.7) - 2024-05-20
 
 ### Other
